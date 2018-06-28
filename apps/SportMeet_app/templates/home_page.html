@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Home Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <header>
+            <h3 class="welcome" >Welcome {{ user.first_name }}!</h3>
+            <a href="/addTeam">Create a New Team</a>
+            <form action="logout" method="post">
+                {% csrf_token %}
+                    <input type="submit" name="logout" value="Logout">
+            </form>
+        </header>
+
+        <h3>Your Teams</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Sport</td>
+                    <td>Team Name</td>
+                    <td>Location</td>
+                    <td>Upcoming Games</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                    <tr>
+                        <td>{{ team.sport }}</a></td>
+                        <td><a href="/viewTeam/{{ team.id }}">{{ team.name }}</a></td>
+                        <td>{{ team.location }}</td>
+                        <td>{{ team.games }}</td>
+                        <td>
+                            {% if request.session.user_id == team.uploader.id %}<a href="/deleteTeam/{{ team.id }}">Delete</a>{% endif %}, 
+                            <a href="/cancelTeam/{{ team.id }}">Cancel</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Available Teams</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Sport</td>
+                    <td>Team Name</td>
+                    <td>Location</td>
+                    <td>Upcoming Games</td>
+                    <td>Do You Want to Join?</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in otherteams %}
+                    <tr>
+                        <td>{{ team.sport }}</td>
+                        <td><a href="/viewTeam/{{ team.id }}">{{ team.name }}</a></td>
+                        <td>{{ team.location }}</td>
+                        <td>{{ team.games }}</td>
+                        {% if request.session.user_id != team.uploader.id %}
+                            <td>
+                                <a href="/joinTeam/{{ team.id }}">Join</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</body>
+</html>
